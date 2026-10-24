@@ -10,7 +10,6 @@ export default function StudentDashboard() {
     const dispatch = useDispatch();
     const { enrollments, loading, error } = useSelector((state) => state.enrollment);
     const { currentCourse } = useSelector((state) => state.courses);
-
     const [expandedCourse, setExpandedCourse] = useState(null);
     const [courseStats, setCourseStats] = useState({}); // { courseId: { quizStats, assignmentStats, courseData, lessonMap } }
     const [loadingStats, setLoadingStats] = useState({});
@@ -258,7 +257,17 @@ export default function StudentDashboard() {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-2xl sm:text-3xl font-bold text-primary">
-                                                    {Math.round((enrollment.progress?.completedLessons?.length / (stats?.courseData?.syllabus?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0))) * 100)}%
+                                                    {(() => {
+                                                        const completedCount = enrollment.progress?.completedLessons?.length || 0;
+                                                        const totalLessons = stats?.courseData?.syllabus?.reduce(
+                                                            (acc, m) => acc + (m.lessons?.length || 0),
+                                                            0
+                                                        );
+                                                        if (totalLessons && totalLessons > 0) {
+                                                            return `${Math.round((completedCount / totalLessons) * 100)}%`;
+                                                        }
+                                                        return `${enrollment.progress?.percent || 0}%`;
+                                                    })()}
                                                 </p>
                                             </div>
                                         </div>
