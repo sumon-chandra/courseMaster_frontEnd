@@ -27,7 +27,6 @@ export default function Navbar() {
             if (!token) return setMe(null);
             try {
                 const res = await getMe();
-                console.log({ res })
                 setMe(res.data);
             } catch {
                 clearToken();
